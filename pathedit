@@ -51,5 +51,6 @@ then
 else
   # file changed and is not empty
   PATH=`cat "${PATHEDIT_FN}" | filterPath in $*`   # set new path
+  echo ${PATH}
 fi
 fi
