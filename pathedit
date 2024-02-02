@@ -12,6 +12,18 @@ is_sourced() {
   fi
 }
 
+filterPath() {
+  if [ "`echo $2 | tr '[:upper:]' '[:lower]'`" = "byline" ] || ${PATHEDIT_BY_LINE:-false}
+  then
+    case "$1" in
+      out) sed 's/:/\n/g' ;;
+      in) paste -d: -s - ;;
+    esac
+  else
+    cat
+  fi
+}
+
 if ! is_sourced
 then
   echo Error. You must source this script
@@ -28,7 +40,7 @@ else
 # Uncomment out next line to override defaults
 #PATHEDIT_EDITOR="emacs -nw"
 PATHEDIT_FN=`mktemp`    # temporary file
-echo ${PATH} >"${PATHEDIT_FN}"   # set up path
+echo "${PATH}" | filterPath out $* >"${PATHEDIT_FN}"   # set up path
 PATHEDIT_OLD=`ls -li ${PATHEDIT_FN}`  # remember last time
 # execute the editor as best we ecan
 command ${PATHEDIT_EDITOR:-${VISUAL:-${EDITOR:-vi}}} "${PATHEDIT_FN}"
@@ -38,6 +50,6 @@ then
   echo "No changes"
 else
   # file changed and is not empty
-  PATH=`cat "${PATHEDIT_FN}"`   # set new path
+  PATH=`cat "${PATHEDIT_FN}" | filterPath in $*`   # set new path
 fi
 fi
