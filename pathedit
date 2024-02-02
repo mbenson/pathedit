@@ -53,4 +53,10 @@ else
   PATH=`cat "${PATHEDIT_FN}" | filterPath in $*`   # set new path
   echo ${PATH}
 fi
+if ! ${DEBUG:-false}
+then
+  rm ${PATHEDIT_FN}
+  unset PATHEDIT_FN
+  unset PATHEDIT_OLD
+fi
 fi
